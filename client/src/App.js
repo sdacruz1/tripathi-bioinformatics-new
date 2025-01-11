@@ -9,52 +9,47 @@ function App() {
   const [backendData, setBackendData] = useState(new Map())
   const [backendCategories, setBackendCategories] = useState([{}])
 
+  // Get Data From The Backend
   const fetchAPI = async () => {
     const response = await axios.get("http://localhost:8080/api");
     setBackendData(new Map(response.data.serverData));
     setBackendCategories(response.data.categories);
     console.log("Server Data", new Map(response.data.serverData));
-    console.log(response.data.categories);
+    console.log("Server Categories", response.data.categories);
   }
 
   useEffect(() => {
     fetchAPI();
   }, [])
 
-  // const majorArray = [
-  //   {
-  //     majorTitle: "SAM", items: [
-  //       { title: "Add Or Replace Read Groups", active: true, running: "done", data: [['Overwrite Existing Read Groups', 'checkbox', 'true'], ['New Read Group Line', 'text', 'asdf']] },
-  //       { title: "Sort BAM File", active: false, running: "none", data: [['Test Input', 'text', 'Test Response'], ['Second Test Input', 'text', 'Test Response 2']] },
-  //     ]
-  //   },
-  //   {
-  //     majorTitle: "FastQ", items: [
-  //       { title: "FASTQC", active: true, running: "done", data: [['Overwrite Existing Read Groups', 'checkbox', 'true'], ['New Read Group Line', 'text', 'asdf']] },
-  //       { title: "BCL2FASTQ", active: false, running: "none", data: [['Test Input', 'text', 'Test Response'], ['Second Test Input', 'text', 'Test Response 2']] },
-  //     ]
-  //   },
-  //   {
-  //     majorTitle: "BAM", items: [
-  //       { title: "BAM File Analysis", active: true, running: "done", data: [['Overwrite Existing Read Groups', 'checkbox', 'true'], ['New Read Group Line', 'text', 'asdf']] },
-  //       { title: "Index BAM File", active: false, running: "none", data: [['Test Input', 'text', 'Test Response'], ['Second Test Input', 'text', 'Test Response 2']] },
-  //     ]
-  //   },
-  // ]
+  // for testing
+  // useEffect(() => {
+  //   console.log("Updated backendData:", backendData);
+  //   console.log("Value for 'fastqc':", backendData.get("fastqc"));
+  // }, [backendData]); // Runs whenever backendData changes
 
-  const [state, setState] = useState("editing");
+  // Send Data To The Backend
+  const sendDataToBackend = async (data) => {
+    try {
+      await axios.post(
+        "http://localhost:8080/api",
+        Object.fromEntries(data) // Convert Map to object before sending
+      );
+      console.log("Data sent to server:", data);
+    } catch (error) {
+      console.error("Error sending data to the server:", error);
+    }
+  };
+
   const [timelineState, setTimelineState] = useState("editing");
 
-  const toggleEditMode = () => {
-    state === "editing" ? setState('saved') : setState('editing');
-  }
   const toggleTimelineMode = () => {
     if (timelineState === "editing") {
       setTimelineState("saved");
-      setState("saved");
+      sendDataToBackend(backendData);
     } else {
       setTimelineState("editing");
-      setState("editing");
+      fetchAPI();
     }
   }
 
@@ -69,12 +64,12 @@ function App() {
         </Box>
         <Box sx={{ display: "flex", gap: 1, "p": 1 }}>
           {backendCategories.map((majorItem, mIndex) => (
-            <Box sx={{ display: "flex" }}>
-              <Box key={mIndex} sx={{ "borderRadius": "1rem", "p": 2, "bgcolor": "#148087" }}>
+            <Box key={mIndex} sx={{ display: "flex" }}>
+              <Box sx={{ "borderRadius": "1rem", "p": 2, "bgcolor": "#148087" }}>
                 <Typography variant="h3" sx={{ "color": "#ffffff" }}>{majorItem.title}</Typography>
                 {majorItem.entries?.map((item, index) => (
                   (timelineState === 'saved' && !backendData.get(item).isEnabled) ? (null) : (
-                    <TimelineItem key={index} item={backendData.get(item)} timelineState={timelineState} state={state} toggleEditMode={toggleEditMode} />
+                    <TimelineItem key={index} item={backendData.get(item)} timelineState={timelineState} />
                   )
                 ))}
               </Box>
@@ -84,14 +79,10 @@ function App() {
             </Box>
           ))}
         </Box>
-        <Button variant="contained" onClick={toggleTimelineMode}> {state === 'editing' ? ('Save Timeline') : ('Edit Timeline')}</Button>
+        <Button variant="contained" onClick={toggleTimelineMode}> {timelineState === 'editing' ? ('Save Timeline') : ('Edit Timeline')}</Button>
       </Box>
     </Container>
   )
 }
 
 export default App
-
-
-// {[...backendData].map(([key, value]) => (
-//   <p key={key}>{key}: {value.title}</p>))}

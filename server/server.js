@@ -6,34 +6,23 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(express.json()); // Add this to parse JSON bodies
 
-const { DNACategories, DNAExecutables, RNACategories, RNAExecutables } = require('./public/data/SiteData');
-
-
-const majorArray = [
-    {
-      title: "SAM", items: [
-        { title: "Add Or Replace Read Groups", active: true, running: "done", data: [['Overwrite Existing Read Groups', 'checkbox', 'true'], ['New Read Group Line', 'text', 'asdf']] },
-        { title: "Sort BAM File", active: false, running: "none", data: [['Test Input', 'text', 'Test Response'], ['Second Test Input', 'text', 'Test Response 2']] },
-      ]
-    },
-    {
-      title: "FastQ", items: [
-        { title: "FASTQC", active: true, running: "done", data: [['Overwrite Existing Read Groups', 'checkbox', 'true'], ['New Read Group Line', 'text', 'asdf']] },
-        { title: "BCL2FASTQ", active: false, running: "none", data: [['Test Input', 'text', 'Test Response'], ['Second Test Input', 'text', 'Test Response 2']] },
-      ]
-    },
-    {
-      title: "BAM", items: [
-        { title: "BAM File Analysis", active: true, running: "done", data: [['Overwrite Existing Read Groups', 'checkbox', 'true'], ['New Read Group Line', 'text', 'asdf']] },
-        { title: "Index BAM File", active: false, running: "none", data: [['Test Input', 'text', 'Test Response'], ['Second Test Input', 'text', 'Test Response 2']] },
-      ]
-    },
-  ]
+let { DNACategories, DNAExecutables, RNACategories, RNAExecutables } = require('./public/data/SiteData');
 
 app.get("/api", (req, res) => {
-    // res.json({"fruits": ["userOne", "userTwo", "userThree", "userFour"]})
+    console.log("IS THIS:", DNAExecutables)
+    console.log("Sending THIS:", Array.from(DNAExecutables))
     res.json({"categories": DNACategories, "serverData": Array.from(DNAExecutables)})
 });
+
+app.post('/api', (req, res) => {
+  let receivedData = req.body;
+  DNAExecutables = new Map(Object.entries(receivedData));
+  console.log("Received data:", receivedData);
+  console.log("New DNA Executables:", DNAExecutables);
+  res.json({ message: "Data received successfully" });
+});
+
 
 app.listen(8080, () => {console.log("Server started on port 8080")});
