@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { Container, Typography, Button, Box, Checkbox } from "@mui/material"
 import axios from "axios";
 
-function App() {
+function Output() {
 
   const [backendData, setBackendData] = useState([{}])
 
@@ -38,4 +38,4 @@ function App() {
   )
 }
 
-export default App
+export default Output

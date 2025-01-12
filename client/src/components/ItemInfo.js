@@ -21,7 +21,7 @@ const ItemInfo = ({parameter, itemState}) => {
                     variant= "filled"
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={selectedValue}
+                    value={''}
                     label="Choose an Option"
                     onChange={handleChange}
                     sx={{ transform: "scale(0.8)", color: "white" }}>

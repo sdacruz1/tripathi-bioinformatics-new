@@ -1,20 +1,14 @@
 // import React, {useEffect, useState} from 'react'
 import {Container, Typography, Box, Button, Input, Paper, MenuItem, Select, Checkbox} from "@mui/material"
+import { useNavigate } from 'react-router-dom';
 // import axios from "axios";
 
-function App() {
+function Home() {
+  const navigate = useNavigate();
 
-  // const [backendData, setBackendData] = useState([{}])
-
-  // const fetchAPI = async () => {
-  //   const response = await axios.get("http://localhost:8080/api");
-  //   setBackendData(response.data.fruits);
-  //   console.log(response.data.fruits);
-  // }
-
-  // useEffect(() => {
-  //   fetchAPI();
-  // }, [])
+  const goToPage = (page) => {
+    navigate(page);
+  };
 
   return (
     <Container>
@@ -95,7 +89,7 @@ function App() {
             <Checkbox defaultChecked/> <Typography variant="p" sx={{color: "#000000"}}>Run adapter trimming?</Typography>
           </Paper>
           <br></br>
-        <Button variant="contained">Continue</Button>
+        <Button variant="contained" onClick={() => goToPage('/Timeline')}>Continue</Button>
       </Box>
       </Box>
       </Box>
@@ -103,4 +97,4 @@ function App() {
   )
 }
 
-export default App
+export default Home
